@@ -2,32 +2,32 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
    <ItemGroup>
       <Filter Include="Source Files">
-         <UniqueIdentifier>{d3b65b0a-0b94-4608-9461-c51778a74227}</UniqueIdentifier>
+         <UniqueIdentifier>{04e7ff0a-4cc7-45bc-bb48-cb493e11a851}</UniqueIdentifier>
          <Extensions>cpp;c;cxx;rc;def;r;odl;idl;hpj;bat;cc</Extensions>
       </Filter>
       <Filter Include="Source Files\lib">
-         <UniqueIdentifier>{e0eb7757-5e3a-40e2-9c4f-45727733bd06}</UniqueIdentifier>
+         <UniqueIdentifier>{40116818-75d3-4d63-8556-ab770fa892d5}</UniqueIdentifier>
       </Filter>
       <Filter Include="Source Files\lib\include">
-         <UniqueIdentifier>{2eef0835-710a-4116-9191-5d314db71b85}</UniqueIdentifier>
+         <UniqueIdentifier>{cbc25bfe-beb8-4106-88e4-524ce92caf3a}</UniqueIdentifier>
       </Filter>
       <Filter Include="Source Files\lib\lib">
-         <UniqueIdentifier>{ce30801a-b265-4d55-9e3f-93f04795b51c}</UniqueIdentifier>
+         <UniqueIdentifier>{f8af8bb3-4fbc-4e89-a535-9804837d8025}</UniqueIdentifier>
       </Filter>
       <Filter Include="Source Files\lib\lib\books">
-         <UniqueIdentifier>{fa4b00f1-d5c1-4f17-82d3-92db160d8208}</UniqueIdentifier>
+         <UniqueIdentifier>{d4e10319-ffed-405e-85d7-0fad07b81769}</UniqueIdentifier>
       </Filter>
       <Filter Include="Source Files\lib\lib\books\coupled">
-         <UniqueIdentifier>{e31d77bd-b840-42d8-a67d-c330e5a173d4}</UniqueIdentifier>
+         <UniqueIdentifier>{52f61f96-4841-4e9b-b07a-b7c7392676b4}</UniqueIdentifier>
       </Filter>
       <Filter Include="Source Files\lib\lib\books\floor">
-         <UniqueIdentifier>{e87d3598-b7c5-464f-a34c-1e71c867dfcb}</UniqueIdentifier>
+         <UniqueIdentifier>{977496b4-9780-4ea0-927f-68ba2ea62a41}</UniqueIdentifier>
       </Filter>
       <Filter Include="Source Files\lib\lib\books\uncoupled">
-         <UniqueIdentifier>{a319711d-4754-44f5-9a67-cc054e20bf50}</UniqueIdentifier>
+         <UniqueIdentifier>{2d595820-9e78-492e-a963-9742bcfa2c9d}</UniqueIdentifier>
       </Filter>
       <Filter Include="Source Files\lib\lib\modes">
-         <UniqueIdentifier>{b050c716-3e83-4cec-b036-042e54ead759}</UniqueIdentifier>
+         <UniqueIdentifier>{4ff3f228-79d3-4e89-bdcb-26019c1812a5}</UniqueIdentifier>
       </Filter>
    </ItemGroup>
   <ItemGroup>

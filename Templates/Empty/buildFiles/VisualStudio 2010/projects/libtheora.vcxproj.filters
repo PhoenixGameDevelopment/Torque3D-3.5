@@ -2,29 +2,29 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
    <ItemGroup>
       <Filter Include="Source Files">
-         <UniqueIdentifier>{19779650-9c4c-4db6-8020-6dcd990b8861}</UniqueIdentifier>
+         <UniqueIdentifier>{cb7dd582-aba3-438a-8043-48258e83d0cc}</UniqueIdentifier>
          <Extensions>cpp;c;cxx;rc;def;r;odl;idl;hpj;bat;cc</Extensions>
       </Filter>
       <Filter Include="Source Files\lib">
-         <UniqueIdentifier>{45efac71-fb9b-4750-9c1a-682970d2bc3c}</UniqueIdentifier>
+         <UniqueIdentifier>{d5a1af0c-8dcd-4844-8b61-7af54c4690cd}</UniqueIdentifier>
       </Filter>
       <Filter Include="Source Files\lib\include">
-         <UniqueIdentifier>{d76e4a4b-aa0c-413a-b8d4-07bb1a5079bb}</UniqueIdentifier>
+         <UniqueIdentifier>{361e86ce-8687-46f3-87ef-c167286c49c4}</UniqueIdentifier>
       </Filter>
       <Filter Include="Source Files\lib\lib">
-         <UniqueIdentifier>{6cc8e2c8-70a8-4241-9f30-3a4e512de71f}</UniqueIdentifier>
+         <UniqueIdentifier>{77465ef5-876b-4436-adee-7604f9a018a2}</UniqueIdentifier>
       </Filter>
       <Filter Include="Source Files\lib\lib\dec">
-         <UniqueIdentifier>{dd52140c-f75f-4153-82c1-bae05e4c19c0}</UniqueIdentifier>
+         <UniqueIdentifier>{510e29db-ec65-4000-8ca9-734d922f219c}</UniqueIdentifier>
       </Filter>
       <Filter Include="Source Files\lib\lib\dec\x86_vc">
-         <UniqueIdentifier>{4064ec67-02bf-437e-9b92-b61c32b48715}</UniqueIdentifier>
+         <UniqueIdentifier>{e50361d4-1a71-4452-bfb8-d07a77b704fc}</UniqueIdentifier>
       </Filter>
       <Filter Include="Source Files\lib\lib\enc">
-         <UniqueIdentifier>{7bf606e0-11c0-4823-addb-b4366ca30076}</UniqueIdentifier>
+         <UniqueIdentifier>{88fa8a96-3514-4b1e-b807-7719babda2d2}</UniqueIdentifier>
       </Filter>
       <Filter Include="Source Files\lib\lib\enc\x86_32_vs">
-         <UniqueIdentifier>{96866bba-9ba6-4753-96d7-d9826a90c936}</UniqueIdentifier>
+         <UniqueIdentifier>{f95f8a1f-5c2c-4190-91d7-f7ea18aec866}</UniqueIdentifier>
       </Filter>
    </ItemGroup>
   <ItemGroup>
