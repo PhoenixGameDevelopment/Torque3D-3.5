@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+   <ItemGroup>
+      <Filter Include="Source Files">
+         <UniqueIdentifier>{6edb8b8d-15dd-40f9-bbb2-2ce1095d4d24}</UniqueIdentifier>
+         <Extensions>cpp;c;cxx;rc;def;r;odl;idl;hpj;bat;cc</Extensions>
+      </Filter>
+      <Filter Include="Source Files\source">
+         <UniqueIdentifier>{f2cb1b55-fbfc-4cc7-93bf-3b07e9a9b57f}</UniqueIdentifier>
+      </Filter>
+      <Filter Include="Source Files\source\common">
+         <UniqueIdentifier>{9d878efa-674b-4193-b355-44cdde474cdb}</UniqueIdentifier>
+      </Filter>
+      <Filter Include="Source Files\source\npplugin">
+         <UniqueIdentifier>{584580ad-837d-4044-a55f-bfe0ad2c1cd2}</UniqueIdentifier>
+      </Filter>
+      <Filter Include="Source Files\source\npplugin\windows">
+         <UniqueIdentifier>{2fc2a1d8-efa3-41ef-9700-a32acee47b34}</UniqueIdentifier>
+      </Filter>
+   </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Torque.rc">
+      <Filter>Source Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+   <ItemGroup>
+      <ClCompile Include="..\..\..\web\source\common\webCommon.cpp">
+         <Filter>Source Files\source\common</Filter>
+      </ClCompile>
+      <ClCompile Include="..\..\..\web\source\npplugin\npPlugin.cpp">
+         <Filter>Source Files\source\npplugin</Filter>
+      </ClCompile>
+      <ClCompile Include="..\..\..\web\source\npplugin\windows\npWebGamePlugin.cpp">
+         <Filter>Source Files\source\npplugin\windows</Filter>
+      </ClCompile>
+   </ItemGroup>
+   <ItemGroup>
+      <ClInclude Include="..\..\..\web\source\common\webCommon.h">
+         <Filter>Source Files\source\common</Filter>
+      </ClInclude>
+      <ClInclude Include="..\..\..\web\source\common\webConfig.h">
+         <Filter>Source Files\source\common</Filter>
+      </ClInclude>
+      <ClInclude Include="..\..\..\web\source\npplugin\windows\jni.h">
+         <Filter>Source Files\source\npplugin\windows</Filter>
+      </ClInclude>
+      <ClInclude Include="..\..\..\web\source\npplugin\windows\jni_md.h">
+         <Filter>Source Files\source\npplugin\windows</Filter>
+      </ClInclude>
+      <ClInclude Include="..\..\..\web\source\npplugin\windows\jri.h">
+         <Filter>Source Files\source\npplugin\windows</Filter>
+      </ClInclude>
+      <ClInclude Include="..\..\..\web\source\npplugin\windows\jritypes.h">
+         <Filter>Source Files\source\npplugin\windows</Filter>
+      </ClInclude>
+      <ClInclude Include="..\..\..\web\source\npplugin\windows\jri_md.h">
+         <Filter>Source Files\source\npplugin\windows</Filter>
+      </ClInclude>
+      <ClInclude Include="..\..\..\web\source\npplugin\windows\npapi.h">
+         <Filter>Source Files\source\npplugin\windows</Filter>
+      </ClInclude>
+      <ClInclude Include="..\..\..\web\source\npplugin\windows\npruntime.h">
+         <Filter>Source Files\source\npplugin\windows</Filter>
+      </ClInclude>
+      <ClInclude Include="..\..\..\web\source\npplugin\windows\nptypes.h">
+         <Filter>Source Files\source\npplugin\windows</Filter>
+      </ClInclude>
+      <ClInclude Include="..\..\..\web\source\npplugin\windows\npupp.h">
+         <Filter>Source Files\source\npplugin\windows</Filter>
+      </ClInclude>
+      <ClInclude Include="..\..\..\web\source\npplugin\windows\npWebGamePlugin.h">
+         <Filter>Source Files\source\npplugin\windows</Filter>
+      </ClInclude>
+      <ClInclude Include="..\..\..\web\source\npplugin\windows\np_plat.h">
+         <Filter>Source Files\source\npplugin\windows</Filter>
+      </ClInclude>
+      <ClInclude Include="..\..\..\web\source\npplugin\windows\np_pluginbase.h">
+         <Filter>Source Files\source\npplugin\windows</Filter>
+      </ClInclude>
+      <ClInclude Include="..\..\..\web\source\npplugin\windows\prcpucfg.h">
+         <Filter>Source Files\source\npplugin\windows</Filter>
+      </ClInclude>
+      <ClInclude Include="..\..\..\web\source\npplugin\windows\prtypes.h">
+         <Filter>Source Files\source\npplugin\windows</Filter>
+      </ClInclude>
+      <ClInclude Include="..\..\..\web\source\npplugin\windows\resource.h">
+         <Filter>Source Files\source\npplugin\windows</Filter>
+      </ClInclude>
+   </ItemGroup>
+   <ItemGroup>
+      <CustomBuild Include="..\..\..\web\source\npplugin\windows\NPWebGamePlugin.rc">
+         <Filter>Source Files\source\npplugin\windows</Filter>
+      </CustomBuild>
+   </ItemGroup>
+</Project>
