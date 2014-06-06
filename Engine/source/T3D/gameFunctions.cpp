@@ -177,6 +177,8 @@ ConsoleFunctionGroupEnd( Containers );
 
 bool GameGetCameraTransform(MatrixF *mat, Point3F *velocity)
 {
+
+
    // Return the position and velocity of the control object
    GameConnection* connection = GameConnection::getConnectionToServer();
    return connection && connection->getControlCameraTransform(0, mat) &&

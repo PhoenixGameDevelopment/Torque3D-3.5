@@ -31,6 +31,8 @@
 #include "gfx/gfxDrawUtil.h"
 #include "console/engineAPI.h"
 
+#include "T3D/aiPlayer.h"
+
 
 //----------------------------------------------------------------------------
 /// Displays name & damage above shape objects.
@@ -44,38 +46,42 @@
 ///
 /// This is a stand-alone control and relies only on the standard base GuiControl.
 class GuiShapeNameHud : public GuiControl {
-   typedef GuiControl Parent;
+	typedef GuiControl Parent;
 
-   // field data
-   ColorF   mFillColor;
-   ColorF   mFrameColor;
-   ColorF   mTextColor;
-   ColorF   mLabelFillColor;
-   ColorF   mLabelFrameColor;
+	// field data
+	ColorF   mFillColor;
+	ColorF   mFrameColor;
+	ColorF   mTextColor;
+	ColorF   mLabelFillColor;
+	ColorF   mLabelFrameColor;
 
-   F32      mVerticalOffset;
-   F32      mDistanceFade;
-   bool     mShowFrame;
-   bool     mShowFill;
-   bool     mShowLabelFrame;
-   bool     mShowLabelFill;
+	F32      mVerticalOffset;
+	F32      mDistanceFade;
+	bool     mShowFrame;
+	bool     mShowFill;
+	bool     mShowLabelFrame;
+	bool     mShowLabelFill;
 
-   Point2I  mLabelPadding;
+	Point2I  mLabelPadding;
 
 protected:
-   void drawName( Point2I offset, const char *buf, F32 opacity);
+	void drawName( Point2I offset, const char *buf, F32 opacity);
+	void drawName( Point2I offset, const char *buf, F32 opacity,ColorI col);
 
 public:
-   GuiShapeNameHud();
+	GuiShapeNameHud();
 
-   // GuiControl
-   virtual void onRender(Point2I offset, const RectI &updateRect);
+	// GuiControl
+	virtual void onRender(Point2I offset, const RectI &updateRect);
 
-   static void initPersistFields();
-   DECLARE_CONOBJECT( GuiShapeNameHud );
-   DECLARE_CATEGORY( "Gui Game" );
-   DECLARE_DESCRIPTION( "Displays name and damage of ShapeBase objects in its bounds.\n"
-      "Must be a child of a GuiTSCtrl and a server connection must be present." );
+	virtual void onMouseDown(const GuiEvent &evt); //Jack Stone
+	virtual void onRightMouseDown(const GuiEvent &evt); //Jack Stone
+
+	static void initPersistFields();
+	DECLARE_CONOBJECT( GuiShapeNameHud );
+	DECLARE_CATEGORY( "Gui Game" );
+	DECLARE_DESCRIPTION( "Displays name and damage of ShapeBase objects in its bounds.\n"
+	"Must be a child of a GuiTSCtrl and a server connection must be present." );
 };
 
 
@@ -84,69 +90,82 @@ public:
 IMPLEMENT_CONOBJECT(GuiShapeNameHud);
 
 ConsoleDocClass( GuiShapeNameHud,
-   "@brief Displays name and damage of ShapeBase objects in its bounds. Must be a child of a GuiTSCtrl and a server connection must be present.\n\n"
-   "This control displays the name and damage value of all named ShapeBase objects on the client. "
-   "The name and damage of objects within the control's display area are overlayed above the object.\n\n"
-   "This GUI control must be a child of a TSControl, and a server connection and control object must be present. "
-   "This is a stand-alone control and relies only on the standard base GuiControl.\n\n"
-   
-   "@tsexample\n"
-		"\n new GuiShapeNameHud()"
-		"{\n"
-		"	fillColor = \"0.0 1.0 0.0 1.0\"; // Fills with a solid green color\n"
-		"	frameColor = \"1.0 1.0 1.0 1.0\"; // Solid white frame color\n"
-		"	textColor = \"1.0 1.0 1.0 1.0\"; // Solid white text Color\n"
-		"	showFill = \"true\";\n"
-		"	showFrame = \"true\";\n"
-		"	labelFillColor = \"0.0 1.0 0.0 1.0\"; // Fills with a solid green color\n"
-		"	labelFrameColor = \"1.0 1.0 1.0 1.0\"; // Solid white frame color\n"
-		"	showLabelFill = \"true\";\n"
-		"	showLabelFrame = \"true\";\n"
-		"	verticalOffset = \"0.15\";\n"
-		"	distanceFade = \"15.0\";\n"
-		"};\n"
-   "@endtsexample\n\n"
-   
-   "@ingroup GuiGame\n"
-);
+	"@brief Displays name and damage of ShapeBase objects in its bounds. Must be a child of a GuiTSCtrl and a server connection must be present.\n\n"
+	"This control displays the name and damage value of all named ShapeBase objects on the client. "
+	"The name and damage of objects within the control's display area are overlayed above the object.\n\n"
+	"This GUI control must be a child of a TSControl, and a server connection and control object must be present. "
+	"This is a stand-alone control and relies only on the standard base GuiControl.\n\n"
+
+	"@tsexample\n"
+	"\n new GuiShapeNameHud()"
+	"{\n"
+	"	fillColor = \"0.0 1.0 0.0 1.0\"; // Fills with a solid green color\n"
+	"	frameColor = \"1.0 1.0 1.0 1.0\"; // Solid white frame color\n"
+	"	textColor = \"1.0 1.0 1.0 1.0\"; // Solid white text Color\n"
+	"	showFill = \"true\";\n"
+	"	showFrame = \"true\";\n"
+	"	labelFillColor = \"0.0 1.0 0.0 1.0\"; // Fills with a solid green color\n"
+	"	labelFrameColor = \"1.0 1.0 1.0 1.0\"; // Solid white frame color\n"
+	"	showLabelFill = \"true\";\n"
+	"	showLabelFrame = \"true\";\n"
+	"	verticalOffset = \"0.15\";\n"
+	"	distanceFade = \"15.0\";\n"
+	"};\n"
+	"@endtsexample\n\n"
+
+	"@ingroup GuiGame\n"
+	);
 
 /// Default distance for object's information to be displayed.
 static const F32 cDefaultVisibleDistance = 500.0f;
 
 GuiShapeNameHud::GuiShapeNameHud()
 {
-   mFillColor.set( 0.25f, 0.25f, 0.25f, 0.25f );
-   mFrameColor.set( 0, 1, 0, 1 );
-   mTextColor.set( 0, 1, 0, 1 );
-   mShowFrame = mShowFill = true;
-   mVerticalOffset = 0.5f;
-   mDistanceFade = 0.1f;
-   mLabelPadding.set(0, 0);
+	mFillColor.set( 0.25f, 0.25f, 0.25f, 0.25f );
+	mFrameColor.set( 0, 1, 0, 1 );
+	mTextColor.set( 0, 1, 0, 1 );
+	mShowFrame = mShowFill = true;
+	mVerticalOffset = 0.5f;
+	mDistanceFade = 0.1f;
+	mLabelPadding.set(0, 0);
 }
 
 void GuiShapeNameHud::initPersistFields()
 {
-   addGroup("Colors");     
-   addField( "fillColor",  TypeColorF, Offset( mFillColor, GuiShapeNameHud ), "Standard color for the background of the control." );
-   addField( "frameColor", TypeColorF, Offset( mFrameColor, GuiShapeNameHud ), "Color for the control's frame."  );
-   addField( "textColor",  TypeColorF, Offset( mTextColor, GuiShapeNameHud ), "Color for the text on this control." );
-   addField( "labelFillColor",  TypeColorF, Offset( mLabelFillColor, GuiShapeNameHud ), "Color for the background of each shape name label." );
-   addField( "labelFrameColor", TypeColorF, Offset( mLabelFrameColor, GuiShapeNameHud ), "Color for the frames around each shape name label."  );
-   endGroup("Colors");     
+	addGroup("Colors");     
+	addField( "fillColor",  TypeColorF, Offset( mFillColor, GuiShapeNameHud ), "Standard color for the background of the control." );
+	addField( "frameColor", TypeColorF, Offset( mFrameColor, GuiShapeNameHud ), "Color for the control's frame."  );
+	addField( "textColor",  TypeColorF, Offset( mTextColor, GuiShapeNameHud ), "Color for the text on this control." );
+	addField( "labelFillColor",  TypeColorF, Offset( mLabelFillColor, GuiShapeNameHud ), "Color for the background of each shape name label." );
+	addField( "labelFrameColor", TypeColorF, Offset( mLabelFrameColor, GuiShapeNameHud ), "Color for the frames around each shape name label."  );
+	endGroup("Colors");     
 
-   addGroup("Misc");       
-   addField( "showFill",   TypeBool, Offset( mShowFill, GuiShapeNameHud ), "If true, we draw the background color of the control." );
-   addField( "showFrame",  TypeBool, Offset( mShowFrame, GuiShapeNameHud ), "If true, we draw the frame of the control."  );
-   addField( "showLabelFill",  TypeBool, Offset( mShowLabelFill, GuiShapeNameHud ), "If true, we draw a background for each shape name label." );
-   addField( "showLabelFrame", TypeBool, Offset( mShowLabelFrame, GuiShapeNameHud ), "If true, we draw a frame around each shape name label."  );
-   addField( "labelPadding", TypePoint2I, Offset( mLabelPadding, GuiShapeNameHud ), "The padding (in pixels) between the label text and the frame." );
-   addField( "verticalOffset", TypeF32, Offset( mVerticalOffset, GuiShapeNameHud ), "Amount to vertically offset the control in relation to the ShapeBase object in focus." );
-   addField( "distanceFade", TypeF32, Offset( mDistanceFade, GuiShapeNameHud ), "Visibility distance (how far the player must be from the ShapeBase object in focus) for this control to render." );
-   endGroup("Misc");
-   Parent::initPersistFields();
+	addGroup("Misc");       
+	addField( "showFill",   TypeBool, Offset( mShowFill, GuiShapeNameHud ), "If true, we draw the background color of the control." );
+	addField( "showFrame",  TypeBool, Offset( mShowFrame, GuiShapeNameHud ), "If true, we draw the frame of the control."  );
+	addField( "showLabelFill",  TypeBool, Offset( mShowLabelFill, GuiShapeNameHud ), "If true, we draw a background for each shape name label." );
+	addField( "showLabelFrame", TypeBool, Offset( mShowLabelFrame, GuiShapeNameHud ), "If true, we draw a frame around each shape name label."  );
+	addField( "labelPadding", TypePoint2I, Offset( mLabelPadding, GuiShapeNameHud ), "The padding (in pixels) between the label text and the frame." );
+	addField( "verticalOffset", TypeF32, Offset( mVerticalOffset, GuiShapeNameHud ), "Amount to vertically offset the control in relation to the ShapeBase object in focus." );
+	addField( "distanceFade", TypeF32, Offset( mDistanceFade, GuiShapeNameHud ), "Visibility distance (how far the player must be from the ShapeBase object in focus) for this control to render." );
+	endGroup("Misc");
+	Parent::initPersistFields();
 }
 
-
+void GuiShapeNameHud::onMouseDown(const GuiEvent &evt)  
+{  
+	// Let's let the parent execute its event handling (if any)  
+	GuiTSCtrl *parent = dynamic_cast<GuiTSCtrl*>(getParent());  
+	if (parent)  
+		parent->onMouseDown(evt);  
+}
+void GuiShapeNameHud::onRightMouseDown(const GuiEvent &evt)  
+{  
+	// Let's let the parent execute its event handling (if any)  
+	GuiTSCtrl *parent = dynamic_cast<GuiTSCtrl*>(getParent());  
+	if (parent)  
+		parent->onRightMouseDown(evt);  
+}
 //----------------------------------------------------------------------------
 /// Core rendering method for this control.
 ///
@@ -160,121 +179,334 @@ void GuiShapeNameHud::initPersistFields()
 /// @param   updateRect   Extents of control.
 void GuiShapeNameHud::onRender( Point2I, const RectI &updateRect)
 {
-   // Background fill first
-   if (mShowFill)
-      GFX->getDrawUtil()->drawRectFill(updateRect, mFillColor);
+	// Background fill first
+	if (mShowFill)
+		GFX->getDrawUtil()->drawRectFill(updateRect, mFillColor);
 
-   // Must be in a TS Control
-   GuiTSCtrl *parent = dynamic_cast<GuiTSCtrl*>(getParent());
-   if (!parent) return;
+	// Must be in a TS Control
+	GuiTSCtrl *parent = dynamic_cast<GuiTSCtrl*>(getParent());
+	if (!parent) return;
 
-   // Must have a connection and control object
-   GameConnection* conn = GameConnection::getConnectionToServer();
-   if (!conn) return;
-   GameBase * control = dynamic_cast<GameBase*>(conn->getControlObject());
-   if (!control) return;
+	// Must have a connection and control object
+	GameConnection* conn = GameConnection::getConnectionToServer();
+	if (!conn) return;
+	GameBase * control = dynamic_cast<GameBase*>(conn->getControlObject());
+	if (!control) return;
 
-   // Get control camera info
-   MatrixF cam;
-   Point3F camPos;
-   VectorF camDir;
-   conn->getControlCameraTransform(0,&cam);
-   cam.getColumn(3, &camPos);
-   cam.getColumn(1, &camDir);
+	// Get control camera info
+	MatrixF cam;
+	Point3F camPos;
+	VectorF camDir;
+	conn->getControlCameraTransform(0,&cam);
+	cam.getColumn(3, &camPos);
+	cam.getColumn(1, &camDir);
 
-   F32 camFov;
-   conn->getControlCameraFov(&camFov);
-   camFov = mDegToRad(camFov) / 2;
+	F32 camFov;
+	conn->getControlCameraFov(&camFov);
+	camFov = mDegToRad(camFov) / 2;
 
-   // Visible distance info & name fading
-   F32 visDistance = gClientSceneGraph->getVisibleDistance();
-   F32 visDistanceSqr = visDistance * visDistance;
-   F32 fadeDistance = visDistance * mDistanceFade;
+	// Visible distance info & name fading
+	F32 visDistance = gClientSceneGraph->getVisibleDistance();
+	F32 visDistanceSqr = visDistance * visDistance;
+	F32 fadeDistance = visDistance * mDistanceFade;
 
-   // Collision info. We're going to be running LOS tests and we
-   // don't want to collide with the control object.
-   static U32 losMask = TerrainObjectType | ShapeBaseObjectType;
-   control->disableCollision();
+	// Collision info. We're going to be running LOS tests and we
+	// don't want to collide with the control object.
+	static U32 losMask = TerrainObjectType | ShapeBaseObjectType;
+	control->disableCollision();
 
-   // All ghosted objects are added to the server connection group,
-   // so we can find all the shape base objects by iterating through
-   // our current connection.
-   for (SimSetIterator itr(conn); *itr; ++itr) {
-      ShapeBase* shape = dynamic_cast< ShapeBase* >(*itr);
-      if ( shape ) {
-         if (shape != control && shape->getShapeName()) 
-         {
+	// All ghosted objects are added to the server connection group,
+	// so we can find all the shape base objects by iterating through
+	// our current connection.
+	bool clientrender = false;
+	const char * clname = "";
+	const char * teamname = "";
 
-            // Target pos to test, if it's a player run the LOS to his eye
-            // point, otherwise we'll grab the generic box center.
-            Point3F shapePos;
-            if (shape->getTypeMask() & PlayerObjectType) 
-            {
-               MatrixF eye;
+	for (SimSetIterator itr(conn); *itr; ++itr) {
+		ShapeBase* shape = dynamic_cast< ShapeBase* >(*itr);
+		if ( shape ) {
+			if (shape != control && shape->getShapeName()) 
+			{
 
-               // Use the render eye transform, otherwise we'll see jittering
-               shape->getRenderEyeTransform(&eye);
-               eye.getColumn(3, &shapePos);
-            } 
-            else 
-            {
-                // Use the render transform instead of the box center
-                // otherwise it'll jitter.
-               MatrixF srtMat = shape->getRenderTransform();
-               srtMat.getColumn(3, &shapePos);
-            }
-            VectorF shapeDir = shapePos - camPos;
+				//Con::printf("INFO: %s %s %s", shape->getIdString() , shape->getClientObject()->getIdString(),conn->getIdString() );
+				//Con::printf("INFO: %f" ,  shape->getFadeVal() );
 
-            // Test to see if it's in range
-            F32 shapeDist = shapeDir.lenSquared();
-            if (shapeDist == 0 || shapeDist > visDistanceSqr)
-               continue;
-            shapeDist = mSqrt(shapeDist);
+				//	Con::printf("MS111 %s  %d" , shape->getClassName(),dStricmp(shape->getClassName(), "AIPlayer"));
 
-            // Test to see if it's within our viewcone, this test doesn't
-            // actually match the viewport very well, should consider
-            // projection and box test.
-            shapeDir.normalize();
-            F32 dot = mDot(shapeDir, camDir);
-            if (dot < camFov)
-               continue;
+				//if(shape->getClassName()
+				//dStricmp(str, "true")
+				if(dStricmp(shape->getClassName(), "AIPlayer")==0){
+					//	Con::printf("MS111 %s" , shape->getClassName());
 
-            // Test to see if it's behind something, and we want to
-            // ignore anything it's mounted on when we run the LOS.
-            RayInfo info;
-            shape->disableCollision();
-            SceneObject *mount = shape->getObjectMount();
-            if (mount)
-               mount->disableCollision();
-            bool los = !gClientContainer.castRay(camPos, shapePos,losMask, &info);
-            shape->enableCollision();
-            if (mount)
-               mount->enableCollision();
-            if (!los)
-               continue;
+					//	ShapeBase* shape
+					AIPlayer* aip = dynamic_cast<AIPlayer*> (shape);
 
-            // Project the shape pos into screen space and calculate
-            // the distance opacity used to fade the labels into the
-            // distance.
-            Point3F projPnt;
-            shapePos.z += mVerticalOffset;
-            if (!parent->project(shapePos, &projPnt))
-               continue;
-            F32 opacity = (shapeDist < fadeDistance)? 1.0:
-               1.0 - (shapeDist - fadeDistance) / (visDistance - fadeDistance);
 
-            // Render the shape's name
-            drawName(Point2I((S32)projPnt.x, (S32)projPnt.y),shape->getShapeName(),opacity);
-         }
-      }
-   }
 
-   // Restore control object collision
-   control->enableCollision();
+					//get control client of this object. If present, it means this object is a squad member:
+					const char *c = aip->getDataField(StringTable->insert("controlclient"),NULL);
 
-   // Border last
-   if (mShowFrame)
-      GFX->getDrawUtil()->drawRect(updateRect, mFrameColor);
+					//	Con::printf("MS4: %s %d" , c , aip->mcontrolclient);
+
+					const char *d = shape->getDataField(StringTable->insert("moveStuckTestDelay"),NULL);
+					//const char *d = shape->getDataField(StringTable->insert("currhealth"),NULL);
+					//U32 c = shape->getDataField(StringTable->insert("controlclient"),NULL);
+					//const char *c = getFieldValue(shape,StringTable->insert("controlclient"),"");
+
+					//		Con::printf("MS3: %s %d" , d , dAtoi(d));
+					//		Con::printf("MS7: %s %d" , shape->getIdString() , dAtoi(d));
+
+					S32 cl = dAtoi(Con::getVariable("currclient"));  
+					//		Con::printf("MS79: %s %d" , Con::getVariable("currclient") ,cl);
+					//then get the client object of the controlclient server object:
+					//		if(cl>0)				
+					//	NetConnection *clconn = (NetConnection *) Sim::findObject(cl);
+					//		else
+					//	Con::printf("ERROR!");
+					//Sim::findObject(conn);
+
+					//GameConnection* clconn =GameConnection::getLocalClientConnection();
+					//GameConnection* clconn =	conn->getLocalClientConnection();
+					AIPlayer* aip2 = dynamic_cast<AIPlayer*> (shape);
+					const char *e = aip2->getDataField(StringTable->insert("controlclient"),NULL);
+
+					//		Con::printf("MS8: %s %d" , e , aip2->mcontrolclient); //working
+
+					const char *g = aip2->getDataField(StringTable->insert("currteam"),NULL);//		const char *g = Con::getVariable("currteam");  teamname
+					teamname = g;
+
+					//		Con::printf("ddd: %s" ,conn->getIdString());
+					if(aip2->mcontrolclient == cl){
+						//	Con::printf("CLIENT RENDERING");
+						clientrender = true;
+
+
+						const char *f = aip2->getDataField(StringTable->insert("clname"),NULL);
+						clname = f;
+
+
+					}
+					else
+						clientrender = false;
+					/*
+					S32 ghostIndex = conn->getGhostIndex(shape);
+					Con::printf("D: %d" , ghostIndex );
+					if(ghostIndex > 0 ){
+					//	GameConnection* clconn = dynamic_cast<GameConnection*> (cl);
+					NetObject *foo =	conn->resolveObjectFromGhostIndex(ghostIndex);
+					Con::printf("Dgg: %s" , foo->getIdString() );
+					AIPlayer* aip2 = dynamic_cast<AIPlayer*> (foo);
+					const char *c = aip2->getDataField(StringTable->insert("controlclient"),NULL);
+
+					Con::printf("MS8: %s %d" , c , aip2->mcontrolclient); //working
+					if(aip2->mcontrolclient == dAtoi(clconn->getIdString())){
+					Con::printf("CLIENT RENDERING");
+
+					}
+					}
+					*/
+					//			S32 gI = clconn->getGhostIndex(shape); //client index of this object
+
+
+					//if the control client matches this client, perform client specific rendering
+
+
+					//or, get server object of this client connection, and compare to the controlobject??
+					//	Con::printf("MS2: %s %s" , conn->getIdString() , clconn->getIdString());
+
+				}
+
+
+				if(shape->getFadeVal() == 1){
+					//visible
+
+
+
+					// Target pos to test, if it's a player run the LOS to his eye
+					// point, otherwise we'll grab the generic box center.
+					Point3F shapePos;
+					if (shape->getTypeMask() & PlayerObjectType) 
+					{
+						MatrixF eye;
+
+						// Use the render eye transform, otherwise we'll see jittering
+						shape->getRenderEyeTransform(&eye);
+						eye.getColumn(3, &shapePos);
+					} 
+					else 
+					{
+						// Use the render transform instead of the box center
+						// otherwise it'll jitter.
+						MatrixF srtMat = shape->getRenderTransform();
+						srtMat.getColumn(3, &shapePos);
+					}
+					VectorF shapeDir = shapePos - camPos;
+
+					// Test to see if it's in range
+					F32 shapeDist = shapeDir.lenSquared();
+					if (shapeDist == 0 || shapeDist > visDistanceSqr)
+						continue;
+					shapeDist = mSqrt(shapeDist);
+
+					// Test to see if it's within our viewcone, this test doesn't
+					// actually match the viewport very well, should consider
+					// projection and box test.
+
+
+
+					shapeDir.normalize();
+					F32 dot = mDot(shapeDir, camDir);
+					if (dot < camFov)
+						continue;
+
+					//			if(strcmp(shape->getShapeName(),"TEST")==0)
+					//	Con::printf("Test found1...");
+
+					// Test to see if it's behind something, and we want to
+					// ignore anything it's mounted on when we run the LOS.
+					RayInfo info;
+					shape->disableCollision();
+					SceneObject *mount = shape->getObjectMount();
+					if (mount)
+						mount->disableCollision();
+					bool los = !gClientContainer.castRay(camPos, shapePos,losMask, &info);
+					shape->enableCollision();
+					if (mount)
+						mount->enableCollision();
+
+					//char *to = (char*) malloc(5);
+					// strncpy(to, shape->getShapeName(), 4);
+					// 	Con::printf("OUT2: %s" , to);
+					//	Con::printf("OUT3: %s" , shape->getName());
+					//			if(strcmp(to,"/acc")==0){
+					//		Con::printf("Test found2...");
+
+					String s = shape->getShapeName();
+					//	Con::printf("Shape1: %s" ,s.c_str() );
+
+					String comp = "";
+					if(s.size()>4)
+						comp = s.substr(0,4);
+
+					if(comp.equal("/acc")){
+						//Con::printf("Shape2: %s %s" ,s.c_str() , comp.c_str());
+						String newstring = s.replace("/acc","");
+						//Con::printf("Shape2: %s %s" ,s.c_str() , newstring.c_str());
+						shape->setShapeName(s);
+
+						Point3F projPnt;
+						shapePos.z += (mVerticalOffset+2);
+
+						if (!parent->project(shapePos, &projPnt))
+							continue;
+						F32 opacity = (shapeDist < fadeDistance)? 1.0:
+							1.0 - (shapeDist - fadeDistance) / (visDistance - fadeDistance);
+
+						// Render the shape's name
+						drawName(Point2I((S32)projPnt.x, (S32)projPnt.y),s,opacity);
+
+					}
+					else{ 
+
+						if (!los)
+							continue;
+						//Con::printf("OUT1: %s" , shape->getName());
+
+						//  const char* from = "12345678";
+						//}
+
+
+
+						//			if(strcmp(shape->getShapeName(),"TEST")==0)
+						//	Con::printf("Test found3...");
+
+						// Project the shape pos into screen space and calculate
+						// the distance opacity used to fade the labels into the
+						// distance.
+						Point3F projPnt;
+
+						//char str = shape->getShapeName().substr(0,5);
+
+
+
+						//if(strcmp(shape->getShapeName(),"TEST")==0){
+						//	Con::printf("INFONAME: %s" , shape->getName());
+
+
+						//							if(strcmp(shape->getName(),"InfoObject"))
+						//	Con::printf("INFO IS HERE");
+
+						//if
+						//shape->
+						//Con::printf("Test found...");
+						//	shapePos.z += (mVerticalOffset+1);
+						//}else
+						shapePos.z += mVerticalOffset;
+						if (!parent->project(shapePos, &projPnt))
+							continue;
+						F32 opacity = (shapeDist < fadeDistance)? 1.0:
+							1.0 - (shapeDist - fadeDistance) / (visDistance - fadeDistance);
+
+						ColorI col =  ColorI(0,0,0); 
+						//mFillColor = ColorI(0,0,128);
+
+						//		Con::printf("TEST:::>%s" , teamname);
+
+						if(strcmp(teamname,"RED")==0){
+							col =  ColorI(120,0,0); 
+							//		Con::printf("RED TEAM");
+						}
+						else{
+							col =  ColorI(0,0,120); 
+							//	Con::printf("BLUE TEAM");
+						}
+
+						if(clientrender){
+							//if (mShowFill)
+							//GFX->getDrawUtil()->drawRectFill(updateRect, mFillColor);
+							// Render the shape's name
+							col =  ColorI(255,255,255,255); 
+							drawName(Point2I((S32)projPnt.x, (S32)projPnt.y),shape->getShapeName(),opacity,col);
+							//if (mShowFill)
+							//GFX->getDrawUtil()->drawRectFill(updateRect, ColorI(0,255,0));
+
+							//only render name if this is an aiplayer?
+
+							drawName(Point2I((S32)projPnt.x, (S32)projPnt.y+15),clname,opacity,col);
+							//drawName(Point2I((S32)projPnt.x, (S32)projPnt.y+30),"Eager,Fresh",opacity,col);
+						}
+						else{
+							//if (mShowFill)
+							//GFX->getDrawUtil()->drawRectFill(updateRect, mFillColor);
+							// Render the shape's name
+							drawName(Point2I((S32)projPnt.x, (S32)projPnt.y),shape->getShapeName(),opacity,col);
+						}
+
+						// Render the shape's name
+						//drawName(Point2I((S32)projPnt.x, (S32)projPnt.y),shape->getShapeName(),opacity);
+
+						//if(clientrender){
+						//		drawName(Point2I((S32)projPnt.x, (S32)projPnt.y+15),clname,opacity);
+						//}
+
+						//drawName(Point2I((S32)projPnt.x, (S32)projPnt.y+15),shape->getShapeName(),opacity);
+						//display second line only if selected?
+						//multicolour
+						//client only text
+						//if get control object == client object, perform client only rendering?
+
+					}
+				}
+			}
+		}
+	}
+
+	// Restore control object collision
+	control->enableCollision();
+
+	// Border last
+	if (mShowFrame)
+		GFX->getDrawUtil()->drawRect(updateRect, mFrameColor);
 }
 
 
@@ -290,26 +522,50 @@ void GuiShapeNameHud::onRender( Point2I, const RectI &updateRect)
 /// @param   opacity Opacity of name (a fraction).
 void GuiShapeNameHud::drawName(Point2I offset, const char *name, F32 opacity)
 {
-   F32 width = mProfile->mFont->getStrWidth((const UTF8 *)name) + mLabelPadding.x * 2;
-   F32 height = mProfile->mFont->getHeight() + mLabelPadding.y * 2;
-   Point2I extent = Point2I(width, height);
+	F32 width = mProfile->mFont->getStrWidth((const UTF8 *)name) + mLabelPadding.x * 2;
+	F32 height = mProfile->mFont->getHeight() + mLabelPadding.y * 2;
+	Point2I extent = Point2I(width, height);
 
-   // Center the name
-   offset.x -= width / 2;
-   offset.y -= height / 2;
+	// Center the name
+	offset.x -= width / 2;
+	offset.y -= height / 2;
 
-   // Background fill first
-   if (mShowLabelFill)
-      GFX->getDrawUtil()->drawRectFill(RectI(offset, extent), mLabelFillColor);
+	// Background fill first
+	if (mShowLabelFill)
+		GFX->getDrawUtil()->drawRectFill(RectI(offset, extent), mLabelFillColor);
 
-   // Deal with opacity and draw.
-   mTextColor.alpha = opacity;
-   GFX->getDrawUtil()->setBitmapModulation(mTextColor);
-   GFX->getDrawUtil()->drawText(mProfile->mFont, offset + mLabelPadding, name);
-   GFX->getDrawUtil()->clearBitmapModulation();
+	// Deal with opacity and draw.
+	mTextColor.alpha = opacity;
+	GFX->getDrawUtil()->setBitmapModulation(mTextColor);
+	GFX->getDrawUtil()->drawText(mProfile->mFont, offset + mLabelPadding, name);
+	GFX->getDrawUtil()->clearBitmapModulation();
 
-   // Border last
-   if (mShowLabelFrame)
-      GFX->getDrawUtil()->drawRect(RectI(offset, extent), mLabelFrameColor);
+	// Border last
+	if (mShowLabelFrame)
+		GFX->getDrawUtil()->drawRect(RectI(offset, extent), mLabelFrameColor);
 }
 
+void GuiShapeNameHud::drawName(Point2I offset, const char *name, F32 opacity,ColorI col)
+{
+	F32 width = mProfile->mFont->getStrWidth((const UTF8 *)name) + mLabelPadding.x * 2;
+	F32 height = mProfile->mFont->getHeight() + mLabelPadding.y * 2;
+	Point2I extent = Point2I(width, height);
+
+	// Center the name
+	offset.x -= width / 2;
+	offset.y -= height / 2;
+
+	// Background fill first
+	//if (mShowLabelFill)
+	GFX->getDrawUtil()->drawRectFill(RectI(offset, extent), col);
+
+	// Deal with opacity and draw.
+	mTextColor.alpha = opacity;
+	GFX->getDrawUtil()->setBitmapModulation(mTextColor);
+	GFX->getDrawUtil()->drawText(mProfile->mFont, offset + mLabelPadding, name);
+	GFX->getDrawUtil()->clearBitmapModulation();
+
+	// Border last
+	if (mShowLabelFrame)
+		GFX->getDrawUtil()->drawRect(RectI(offset, extent), mLabelFrameColor);
+}

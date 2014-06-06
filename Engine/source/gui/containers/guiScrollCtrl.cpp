@@ -120,11 +120,16 @@ bool GuiScrollCtrl::resize(const Point2I &newPos, const Point2I &newExt)
 
 void GuiScrollCtrl::childResized(GuiControl *child)
 {
+	
    if ( mIgnoreChildResized )
       return;
 
    Parent::childResized(child);
    computeSizes();
+   //Jack Stone:
+   //  if (mAutoBottom)
+   scrollTo( 0, 0x7FFFFFFF ); 
+
 }
 
 //-----------------------------------------------------------------------------

@@ -44,6 +44,8 @@ class GameTSCtrl : public GuiTSCtrl
 {
 private:
    typedef GuiTSCtrl Parent;
+      Point3F mMouse3DVec;  
+   Point3F mMouse3DPos; 
 
 #ifdef TORQUE_DEMO_WATERMARK
    Watermark mWatermark;
@@ -59,6 +61,10 @@ public:
 
    bool processCameraQuery(CameraQuery *query);
    void renderWorld(const RectI &updateRect);
+
+   //void onMouseDown(const GuiEvent &evt); //left-mouse click  
+   Point3F getMouse3DVec() {return mMouse3DVec;};  
+   Point3F getMouse3DPos() {return mMouse3DPos;};
 
    // GuiControl
    virtual void onMouseDown(const GuiEvent &evt);

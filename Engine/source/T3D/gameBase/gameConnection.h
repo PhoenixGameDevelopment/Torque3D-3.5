@@ -29,6 +29,9 @@
 #ifndef _GAMEBASE_H_
 #include "T3D/gameBase/gameBase.h"
 #endif
+#ifndef _SHAPEBASE_H_  
+#include "T3D/shapeBase.h"  
+#endif 
 #ifndef _NETCONNECTION_H_
 #include "sim/netConnection.h"
 #endif
@@ -72,10 +75,15 @@ private:
 
    U32  mMissionCRC;             // crc of the current mission file from the server
 
+   SimObjectPtr<ShapeBase> mSelectedObj;//pointer to our selected object  
+   bool mChangedSelectedObj; //flag used to determine if we have changed our selected object
+
 private:
    U32 mLastControlRequestTime;
    S32 mDataBlockModifiedKey;
    S32 mMaxDataBlockModifiedKey;
+
+
 
    /// @name Client side first/third person
    /// @{
@@ -117,6 +125,8 @@ public:
    static const U32 CurrentProtocolVersion;
    static const U32 MinRequiredProtocolVersion;
    /// @}
+
+
 
    /// Configuration
    enum Constants {
@@ -249,6 +259,10 @@ public:
    { 
       return dynamic_cast<GameConnection*>((NetConnection *) mLocalClientConnection); 
    }
+
+       void setSelectedObject(ShapeBase *so) { mSelectedObj = so; mChangedSelectedObj = true; }  
+   ShapeBase* getSelectedObject()  { return  mSelectedObj; }  
+   bool hasChangedSelectedObject() { return mChangedSelectedObj; }
 
    /// @name Control object
    /// @{

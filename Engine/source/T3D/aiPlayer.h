@@ -39,6 +39,7 @@ public:
 		ModeStuck,                      // AI is stuck, but wants to move.
       ModeSlowing,                    // AI is slowing down as it reaches it's destination.
 	};
+	   S32 mcontrolclient;				   // JackStone
 
 private:
    MoveState mMoveState;
@@ -48,6 +49,7 @@ private:
    Point3F mLastLocation;              // For stuck check
    F32 mMoveStuckTolerance;            // Distance tolerance on stuck check
    S32 mMoveStuckTestDelay;            // The number of ticks to wait before checking if the AI is stuck
+
    S32 mMoveStuckTestCountdown;        // The current countdown until at AI starts to check if it is stuck
    bool mMoveSlowdown;                 // Slowdown as we near the destination
 

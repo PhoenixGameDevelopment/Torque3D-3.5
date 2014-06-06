@@ -102,9 +102,40 @@ void GameTSCtrl::makeScriptCall(const char *func, const GuiEvent &evt) const
 
 void GameTSCtrl::onMouseDown(const GuiEvent &evt)
 {
+	
+    MatrixF mat;  
+   Point3F vel;  
+   if ( GameGetCameraTransform(&mat, &vel) )   
+   {  
+      //get the camera position  
+      Point3F pos;  
+      mat.getColumn(3,&pos);  
+  
+      //take our mouse coordinates and create (x,y,z) screen coordinates  
+       Point3F screenPoint((F32)evt.mousePoint.x, (F32)evt.mousePoint.y, 1.0f);
+  
+      //take our screen coordinates and get the corresponding   
+      //world coordinates (this is what unproject does for us)  
+      Point3F worldPoint;  
+      if (unproject(screenPoint, &worldPoint))   
+      {  
+         mMouse3DPos = pos;  
+         //create a vector that points from our starting point (the   
+         //camera position) and heads towards our point we have chosen  
+         //in the world  
+         mMouse3DVec = worldPoint - pos;  
+         mMouse3DVec.normalizeSafe();  
+  
+         //call client script handler  
+        //Con::executef(this, 1, "onMouseDown");  
+      }  
+   }  
+  
+   	Con::printf("ONMOUSEDOWN");
    Parent::onMouseDown(evt);
    if( isMethod( "onMouseDown" ) )
       makeScriptCall( "onMouseDown", evt );
+
 }
 
 void GameTSCtrl::onRightMouseDown(const GuiEvent &evt)
@@ -146,22 +177,53 @@ void GameTSCtrl::onMouseMove(const GuiEvent &evt)
 {
    if(gSnapLine)
       return;
-
+   
    MatrixF mat;
    Point3F vel;
    if ( GameGetCameraTransform(&mat, &vel) )
    {
       Point3F pos;
       mat.getColumn(3,&pos);
-      Point3F screenPoint((F32)evt.mousePoint.x, (F32)evt.mousePoint.y, -1.0f);
+      Point3F screenPoint((F32)evt.mousePoint.x, (F32)evt.mousePoint.y, 1.0f);
       Point3F worldPoint;
       if (unproject(screenPoint, &worldPoint)) {
-         Point3F vec = worldPoint - pos;
-         lineTestStart = pos;
-         vec.normalizeSafe();
-         lineTestEnd = pos + vec * 1000;
+         mMouse3DPos = pos;  
+         //create a vector that points from our starting point (the   
+         //camera position) and heads towards our point we have chosen  
+         //in the world  
+         mMouse3DVec = worldPoint - pos;  
+         mMouse3DVec.normalizeSafe();  
+
+
+
       }
    }
+   // if( isMethod( "onMove" ) )
+     // makeScriptCall( "MoveCursor2", evt );
+  
+
+
+	  Point3F vec = this->getMouse3DVec();
+	  Point3F pos = this->getMouse3DPos();
+
+
+	 //    char buffer[8192];
+     // dSprintf(buffer, sizeof(buffer), "%s?%s", mPath, mQuery);
+
+	  	   //		    Con::printf("Pos: %f %f %f" , vec.x, vec.y, vec.z );
+			//   Con::printf("Vec: %f %f %f" ,mMouse3DVec.x, mMouse3DVec.y, mMouse3DVec.z );
+	//  Con::printf("Vec1: %f %f %f" ,mMouse3DVec.x, mMouse3DVec.y, mMouse3DVec.z );
+	     char returnbufvec[255];
+       dSprintf(returnbufvec,sizeof(returnbufvec),"%g %g %g", vec.x,vec.y,vec.z);
+	//   Con::printf("Vec2: %f %f %f" ,mMouse3DVec.x, mMouse3DVec.y, mMouse3DVec.z );
+	   	     char returnbufpos[255];   
+       dSprintf(returnbufpos,sizeof(returnbufpos),"%g %g %g", pos.x,pos.y,pos.z);
+	//   Con::printf("Vec3: %f %f %f" ,mMouse3DVec.x, mMouse3DVec.y, mMouse3DVec.z );
+
+	//   Con::printf("DTA1: %s" , returnbufvec );
+	//    Con::printf("DTA2: %s" , returnbufpos );
+	//    Con::printf("DTA2: ");
+	  Con::executef("MoveCursor",returnbufvec,returnbufpos);
 }
 
 void GameTSCtrl::onRender(Point2I offset, const RectI &updateRect)
@@ -207,3 +269,23 @@ DefineEngineFunction(snapToggle, void, (),,
 //{
 //   gSnapLine = !gSnapLine;
 //}
+
+ConsoleMethod( GameTSCtrl, getMouse3DVec, const char*, 2, 2, "()")  
+{  
+   char* retBuffer = Con::getReturnBuffer(256);  
+   const Point3F &vec = object->getMouse3DVec();  
+  
+   dSprintf(retBuffer, 256, "%g %g %g", vec.x, vec.y, vec.z);  
+  
+   return retBuffer;  
+}  
+  
+ConsoleMethod( GameTSCtrl, getMouse3DPos, const char*, 2, 2, "()")  
+{  
+   char* retBuffer = Con::getReturnBuffer(256);  
+   const Point3F &pos = object->getMouse3DPos();  
+  
+   dSprintf(retBuffer, 256, "%g %g %g", pos.x, pos.y, pos.z);  
+  
+   return retBuffer;  
+}

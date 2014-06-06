@@ -89,6 +89,7 @@ AIPlayer::AIPlayer()
    mMoveTolerance = 0.25f;
    mMoveStuckTolerance = 0.01f;
    mMoveStuckTestDelay = 30;
+   mcontrolclient = 45;
    mMoveStuckTestCountdown = 0;
    mMoveSlowdown = true;
    mMoveState = ModeStop;
@@ -126,6 +127,13 @@ void AIPlayer::initPersistFields()
          "the onMoveStuck() callback is called on the datablock.\n");
 
       addField( "moveStuckTestDelay", TypeS32, Offset( mMoveStuckTestDelay, AIPlayer ), 
+         "@brief The number of ticks to wait before testing if the AIPlayer is stuck.\n\n"
+         "When the AIPlayer is asked to move, this property is the number of ticks to wait "
+         "before the AIPlayer starts to check if it is stuck.  This delay allows the AIPlayer "
+         "to accelerate to full speed without its initial slow start being considered as stuck.\n"
+         "@note Set to zero to have the stuck test start immediately.\n");
+
+	        addField( "controlclient", TypeS32, Offset( mcontrolclient, AIPlayer ), 
          "@brief The number of ticks to wait before testing if the AIPlayer is stuck.\n\n"
          "When the AIPlayer is asked to move, this property is the number of ticks to wait "
          "before the AIPlayer starts to check if it is stuck.  This delay allows the AIPlayer "
@@ -331,6 +339,23 @@ bool AIPlayer::getAIMove(Move *movePtr)
    // Move towards the destination
    if (mMoveState != ModeStop) 
    {
+	   //call back to update decal:
+	  // throwCallback("onUpdateMoveDecal");
+
+	  char* retBuffer = Con::getReturnBuffer(256);  
+    dSprintf(retBuffer, 256, "%f %f %f ", location.x, location.y, location.z);  
+
+	//	  char* retBuffer2 = Con::getReturnBuffer(256);  
+  //  dSprintf(retBuffer, 256, "%f %f %f ", location.x, location.y, location.z);  
+	//const char *e = this->getDataField(StringTable->insert("iscurrentselected"),NULL);
+	//Con::printf("DTA: %s" , e);
+	String selected = Con::getVariable("currentselectedobject");
+	String thisobj = (String)this->getIdString();
+	//Con::printf("DTA: %s %s" , selected.c_str(), this->getIdString());
+
+	if(selected.compare(thisobj)==0)
+	   Con::executef("onUpdateMoveDecal",retBuffer);
+	  
       F32 xDiff = mMoveDestination.x - location.x;
       F32 yDiff = mMoveDestination.y - location.y;
 
@@ -609,4 +634,25 @@ DefineEngineMethod( AIPlayer, getAimObject, S32, (),,
 {
 	GameBase* obj = object->getAimObject();
    return obj? obj->getId(): -1;
+}
+
+DefineEngineMethod( AIPlayer, setcontrolclient, void, (S32 mcc),,
+   "@brief Gets the object the AIPlayer is targeting.\n\n"
+
+   "@return Returns -1 if no object is being aimed at, "
+   "or the SimObjectID of the object the AIPlayer is aiming at.\n\n"
+   
+   "@see setAimObject()\n")
+{
+object->mcontrolclient = mcc;
+}
+DefineEngineMethod( AIPlayer, getcontrolclient, S32, (),,
+   "@brief Gets the object the AIPlayer is targeting.\n\n"
+
+   "@return Returns -1 if no object is being aimed at, "
+   "or the SimObjectID of the object the AIPlayer is aiming at.\n\n"
+   
+   "@see setAimObject()\n")
+{
+	return object->mcontrolclient;
 }

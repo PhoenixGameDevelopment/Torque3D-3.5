@@ -553,6 +553,7 @@ Projectile::Projectile()
    mCurrPosition( 0, 0, 0 ),
    mCurrVelocity( 0, 0, 1 ),
    mSourceObjectId( -1 ),
+   mExcludeObjectId( -1 ),
    mSourceObjectSlot( -1 ),
    mCurrTick( 0 ),
    mParticleEmitter( NULL ),
@@ -607,6 +608,11 @@ void Projectile::initPersistFields()
       "the object that owns the WeaponImage. This is usually the player.");
    addField("sourceSlot",       TypeS32,     Offset(mSourceObjectSlot, Projectile),
       "@brief The sourceObject's weapon slot that the projectile originates from.\n\n");
+
+      addField("coverexclude",     TypeS32,     Offset(mExcludeObjectId, Projectile),
+      "@brief ID number of the object that fired the projectile.\n\n"
+      "@note If the projectile was fired by a WeaponImage, sourceObject will be "
+      "the object that owns the WeaponImage. This is usually the player.");
 
    endGroup("Source");
 
@@ -1100,6 +1106,22 @@ void Projectile::simulate( F32 dt )
    else 
       hit = getContainer()->castRay(oldPosition, newPosition, csmDynamicCollisionMask | csmStaticCollisionMask, &rInfo);
 
+ //  Sceneobject* s = 
+ // SimObjectId sim = rInfo.object->getId();
+  // const char *d = rInfo.object->getIdString(); //rInfo.object->getDataField(StringTable->insert("coverobject"),NULL);
+  // Con::printf("PRINT1: %s" , d);
+  // const char *e = rInfo.object->getDataField(StringTable->insert("coverlevel"),NULL);
+ //  Con::printf("PRINT2: %d" , mExcludeObjectId);
+
+      if ( hit ) //if hit is blank, rinfo is blank, which is causing crashes?
+   {
+	 //    Con::printf("COMPARE: %d %d" , mExcludeObjectId , rInfo.object->getId());
+   if(mExcludeObjectId == rInfo.object->getId()){
+	 //   Con::printf("EXCLUDING: %d" , mExcludeObjectId);
+	   hit = false;
+   }
+	  }
+
    if ( hit )
    {
       // make sure the client knows to bounce
@@ -1285,6 +1307,11 @@ U32 Projectile::packUpdate( NetConnection *con, U32 mask, BitStream *stream )
                                     0, 
                                     NetConnection::MaxGhostCount );
 
+			//            stream->writeRangedU32( U32(mSourceObjectId), //Jack Stone
+             //                       0, 
+             //                       NetConnection::MaxGhostCount );
+			stream->write(mSourceObjectId);
+
             stream->writeRangedU32( U32(mSourceObjectSlot),
                                     0, 
                                     ShapeBase::MaxMountedImages - 1 );
@@ -1329,15 +1356,20 @@ void Projectile::unpackUpdate(NetConnection* con, BitStream* stream)
       if ( stream->readFlag() )
       {
          mSourceObjectId   = stream->readRangedU32( 0, NetConnection::MaxGhostCount );
+		// mExcludeObjectId   = stream->readRangedU32( 0, NetConnection::MaxGhostCount ); //Jack Stone
+		//  mExcludeObjectId   = stream->read(); //Jack Stone
+		  stream->read( &mExcludeObjectId); //Jack Stone
          mSourceObjectSlot = stream->readRangedU32( 0, ShapeBase::MaxMountedImages - 1 );
 
          NetObject* pObject = con->resolveGhost( mSourceObjectId );
          if ( pObject != NULL )
             mSourceObject = dynamic_cast<ShapeBase*>( pObject );
+
       }
       else
       {
          mSourceObjectId   = -1;
+		// mExcludeObjectId   = -1; //Jack Stone
          mSourceObjectSlot = -1;
          mSourceObject     = NULL;
       }

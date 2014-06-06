@@ -216,6 +216,10 @@ GameConnection::GameConnection()
    mBlackOutStartTimeMS = 0;
    mFadeToBlack = false;
 
+   //object selection additions  
+   mSelectedObj = NULL;  
+   mChangedSelectedObj = false;
+
    // first person
    mFirstPerson = true;
    mUpdateFirstPerson = false;
@@ -1011,6 +1015,26 @@ void GameConnection::readPacket(BitStream *bstream)
    {
       mMoveList->clientReadMovePacket(bstream);
 
+	  /*
+	     // object selection additions  
+      // selected object - do we have a change in status?  
+      if (bstream->readFlag())  
+      {   
+         // do we have a selected object now?  
+         bool hasSelectedObj = bstream->readFlag();  
+  
+         if ((hasSelectedObj) && (bstream->readFlag()))  
+         {  
+            S32 gIndex = bstream->readInt(10);  
+            ShapeBase* obj = static_cast<ShapeBase*>(resolveGhost(gIndex));  
+  
+            if (mSelectedObj != obj)  
+               setSelectedObject(obj);  
+         }  
+         else  
+            mSelectedObj = NULL;  
+      }
+	  */
       bool hadFlash = mDamageFlash > 0 || mWhiteOut > 0;
       mDamageFlash = 0;
       mWhiteOut = 0;
@@ -1197,6 +1221,27 @@ void GameConnection::writePacket(BitStream *bstream, PacketNotify *note)
    {
       mMoveList->clientWriteMovePacket(bstream);
 
+	  /*
+	    S32 gIndex = -1;  
+	        // object selection additions  
+      // selected object - have we changed the status of the selected object?  
+      if (bstream->writeFlag(hasChangedSelectedObject()))  
+      {  
+         // do we have a selected object?  
+         if ((bstream->writeFlag(mSelectedObj != NULL)) && (!mSelectedObj.isNull()))  
+         {  
+            gIndex = getGhostIndex(mSelectedObj);  
+  
+            if (bstream->writeFlag(gIndex != -1))  
+               bstream->writeInt(gIndex,10);  
+         }  
+  
+         // reset the status of our object  
+         mChangedSelectedObj = false;  
+      }  
+  
+      gIndex = -1;
+	  */
       bstream->writeFlag(mCameraPos == 1);
 
       // if we're recording, we want to make sure that we get periodic updates of the
@@ -1809,7 +1854,30 @@ DefineEngineMethod( GameConnection, getControlObject, GameBase*, (),,
 {
    return object->getControlObject();
 }
-
+//--------------------------------------------------------------------------  
+// object selection additions  
+//--------------------------------------------------------------------------  
+ConsoleMethod( GameConnection, setSelectedObject, bool, 3, 3, "(%object)")  
+{  
+   ShapeBase *sb;  
+  
+   if(!Sim::findObject(argv[2], sb))  
+      return false;  
+  
+   object->setSelectedObject(sb);  
+  
+   return true;  
+}  
+  
+//--------------------------------------------------------------------------  
+// object selection additions  
+//--------------------------------------------------------------------------  
+ConsoleMethod( GameConnection, getSelectedObject, S32, 2, 2, "()")  
+{  
+   SimObject* so = object->getSelectedObject();  
+  
+   return so? so->getId(): 0;  
+}
 DefineEngineMethod( GameConnection, isAIControlled, bool, (),,
    "@brief Returns true if this connection is AI controlled.\n\n"
    "@see AIConnection")

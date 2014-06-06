@@ -952,6 +952,11 @@ void GuiControl::onMouseDown(const GuiEvent &event)
 	if ( !mVisible || !mAwake )
       return;
 	
+	   //pass the event to the parent
+   GuiControl *parent = getParent();
+   if ( parent )
+      parent->onMouseDown( event );
+
 	execConsoleCallback();
 }
 
